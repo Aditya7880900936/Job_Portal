@@ -1,5 +1,10 @@
 import { createContext, useContext, useEffect, useState } from "react" 
 
+const initialState = {
+  theme: "system",
+  setTheme: () => null,
+}
+
 const ThemeProviderContext = createContext(initialState)
 
 export function ThemeProvider({
