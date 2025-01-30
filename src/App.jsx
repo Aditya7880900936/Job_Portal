@@ -10,51 +10,74 @@ import PostJob from "./Pages/PostJob";
 import SavedJobs from "./Pages/SavedJobs";
 import MyJobs from "./Pages/myJobs";
 import { ThemeProvider } from "./components/theme-provider";
+import Protected_Route from "./components/Protected_Route";
 
 const router = createBrowserRouter([
   {
-    element :<AppLayout/>,
-    children : [
+    element: <AppLayout />,
+    children: [
       {
-        path:"/",
-        element:<LandingPage/>
+        path: "/",
+        element: <LandingPage />,
       },
       {
-        path:"/onBoarding",
-        element:<OnBoarding/>
+        path: "/onBoarding",
+        element: (
+          <Protected_Route>
+            <OnBoarding />
+          </Protected_Route>
+        ),
       },
       {
-        path:"/jobs",
-        element:<JobListing/>
+        path: "/jobs",
+        element: (
+          <Protected_Route>
+            <JobListing />
+          </Protected_Route>
+        ),
       },
       {
-        path:"/job/:id",
-        element:<JobPage/>
+        path: "/job/:id",
+        element: (
+          <Protected_Route>
+            <JobPage />
+          </Protected_Route>
+        ),
       },
       {
-        path:"/post-Job",
-        element:<PostJob/>
+        path: "/post-Job",
+        element: (
+          <Protected_Route>
+            <PostJob />
+          </Protected_Route>
+        ),
       },
       {
-        path:"/saved-Job",
-        element:<SavedJobs/>
-      }
-      ,
+        path: "/saved-Job",
+        element: (
+          <Protected_Route>
+            <SavedJobs />
+          </Protected_Route>
+        ),
+      },
       {
-        path:"/my-jobs",
-        element:<MyJobs/>
-      }
-    ]
-  }
-])
+        path: "/my-jobs",
+        element: (
+          <Protected_Route>
+            <MyJobs />
+          </Protected_Route>
+        ),
+      },
+    ],
+  },
+]);
 
 function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-    <RouterProvider router = {router}/>
+      <RouterProvider router={router} />
     </ThemeProvider>
-
   );
-}  
+}
 
 export default App;
