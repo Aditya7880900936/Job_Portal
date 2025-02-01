@@ -44,7 +44,7 @@ const JobCard = ({
   }, [saveJobs]);
 
   return (
-    <Card>
+    <Card className="flex flex-col">
       <CardHeader>
         <CardTitle className="flex justify-between font-bold">
           {job.title}
