@@ -8,14 +8,12 @@ import { useUser } from "@clerk/clerk-react";
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Pagination } from "@/components/ui/pagination";
 import { BarLoader } from "react-spinners";
 import {
   Select,
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -42,37 +40,7 @@ const JobListing = () => {
     if (total) {
       setTotalJobs(total);
     }
-  }, [total]);  // Replace the existing pagination section with:
-  <nav className="flex justify-center items-center gap-4 mt-8" aria-label="Pagination">
-    <Button 
-      variant="outline" 
-      onClick={() => setPage((prev) => Math.max(prev - 1, 1))} 
-      disabled={page === 1 || loadingJobs}
-      aria-label="Previous page"
-    >
-      <ChevronLeft className="w-4 h-4 mr-1" />
-      Previous
-    </Button>
-  
-    <div className="flex items-center gap-2">
-      <span className="text-sm font-medium">
-        Page {page} of {Math.max(1, Math.ceil(totalJobs / jobsPerPage))}
-      </span>
-      <span className="text-sm text-gray-500">
-        ({totalJobs} total jobs)
-      </span>
-    </div>
-  
-    <Button 
-      variant="outline" 
-      onClick={() => setPage((prev) => prev + 1)} 
-      disabled={page >= Math.ceil(totalJobs / jobsPerPage) || loadingJobs}
-      aria-label="Next page"
-    >
-      Next
-      <ChevronRight className="w-4 h-4 ml-1" />
-    </Button>
-  </nav>
+  }, [total]);
 
   const { fetchData: fetchDataCompanies, data: dataCompanies } =
     useFetch(getCompanies);
@@ -202,7 +170,7 @@ const JobListing = () => {
         </div>
       )}
 
-     {/* <div className="flex justify-center items-center gap-2 mt-6">
+     <div className="flex justify-center items-center gap-2 mt-6">
         <Button variant="outline" onClick={() => setPage((prev) => Math.max(prev - 1, 1))} disabled={page === 1}>
           <ChevronLeft className="w-5 h-5" />
           Prev
@@ -216,38 +184,7 @@ const JobListing = () => {
         </Button>
       </div>
 
-    </div> */}
-    <nav className="flex justify-center items-center gap-4 mt-8" aria-label="Pagination">
-  <Button 
-    variant="outline" 
-    onClick={() => setPage((prev) => Math.max(prev - 1, 1))} 
-    disabled={page === 1 || loadingJobs}
-    aria-label="Previous page"
-  >
-    <ChevronLeft className="w-4 h-4 mr-1" />
-    Previous
-  </Button>
-
-  <div className="flex items-center gap-2">
-    <span className="text-sm font-medium">
-      Page {page} of {Math.max(1, Math.ceil(totalJobs / jobsPerPage))}
-    </span>
-    <span className="text-sm text-gray-500">
-      ({totalJobs} total jobs)
-    </span>
-  </div>
-
-  <Button 
-    variant="outline" 
-    onClick={() => setPage((prev) => prev + 1)} 
-    disabled={page >= Math.ceil(totalJobs / jobsPerPage) || loadingJobs}
-    aria-label="Next page"
-  >
-    Next
-    <ChevronRight className="w-4 h-4 ml-1" />
-  </Button>
-</nav>
-</div>
+    </div>
   );
 }
 

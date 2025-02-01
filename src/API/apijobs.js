@@ -1,11 +1,16 @@
 import supabaseClient from "@/utils/supabase";
 
-export async function getJobs(token, { location, company_id, searchQuery , page=1 , limit = 15}) {
+export async function getJobs(
+  token,
+  { location, company_id, searchQuery, page = 1, limit = 15 }
+) {
   const supabase = await supabaseClient(token);
 
   let query = supabase
     .from("Jobs")
-    .select("* , company:Companies(name,logo_url),saved:Saved_Jobs(id)",{count: 'exact'});
+    .select("* , company:Companies(name,logo_url),saved:Saved_Jobs(id)", {
+      count: "exact",
+    });
 
   if (location) {
     query = query.eq("location", location);
@@ -19,18 +24,18 @@ export async function getJobs(token, { location, company_id, searchQuery , page=
     query = query.ilike("title", `%${searchQuery}%`);
   }
 
-  const start = (page-1)*limit;
-  const end = start+limit-1;
-  query = query.range(start,end)
+  const start = (page - 1) * limit;
+  const end = start + limit - 1;
+  query = query.range(start, end);
 
-  const { data, error , count } = await query;
+  const { data, error, count } = await query;
 
   if (error) {
     console.error("Error Fetching data:", error);
-    return {jobs: [] , count: 0};
+    return { jobs: [], count: 0 };
   }
 
-  return {jobs:data , totalJobs: count};
+  return { jobs: data, totalJobs: count };
 }
 
 export async function savedJobs(token, { alreadySaved }, SavedData) {
@@ -61,5 +66,23 @@ export async function savedJobs(token, { alreadySaved }, SavedData) {
     return data;
   }
 
+  return data;
+}
+
+export async function getSingleJob(token, { job_id }) {
+  const supabase = await supabaseClient(token);
+
+  let query = supabase
+    .from("Jobs")
+    .select("*, company:Companies(name,logo_url),applications:Applications(*)")
+    .eq("id", job_id)
+    .single();
+
+  const { data, error } = await query;
+  
+  if (error) {
+    console.error("Error Fetching Company: ", error);
+    return null;
+  }
   return data;
 }
