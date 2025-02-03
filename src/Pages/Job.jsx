@@ -1,4 +1,4 @@
-import { getSingleJob } from "@/API/apijobs";
+import { getSingleJob, updateHiringStatus } from "@/API/apijobs";
 import useFetch from "@/Hooks/useFetch";
 import { useUser } from "@clerk/clerk-react";
 import React from "react";
@@ -7,6 +7,14 @@ import { useEffect } from "react";
 import { BarLoader } from "react-spinners";
 import { Briefcase, DoorClosed, DoorOpen, MapPinIcon } from "lucide-react";
 import MDEditor from "@uiw/react-md-editor";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const JobPage = () => {
   const { isLoaded, user } = useUser();
@@ -17,6 +25,16 @@ const JobPage = () => {
     data: SingleJobData,
     fetchData: SingleJob,
   } = useFetch(getSingleJob, { job_id: id });
+
+  const { loading: loadingHiringStatus, fetchData: HiringStatus } = useFetch(
+    updateHiringStatus,
+    { job_id: id }
+  );
+
+  const handleStatusChange = (value) => {
+    const isOpen = value === "open" ? true : false;
+    HiringStatus(isOpen).then(() => SingleJob());
+  };
 
   useEffect(() => {
     if (isLoaded) {
@@ -65,8 +83,32 @@ const JobPage = () => {
       </div>
 
       {/* Hiring Status */}
-
-      
+      {SingleJobData?.recruiter_id === user?.id && (
+        <Select onValueChange={handleStatusChange}>
+          <SelectTrigger
+            className={`w-full ${
+              SingleJobData?.isOpen ? "bg-green-950" : "bg-red-950"
+            }`}
+          >
+            <SelectValue
+              placeholder={
+                "Hiring Status" +
+                (SingleJobData?.isOpen ? "(Open)" : "(Closed)")
+              }
+            />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="open">
+                Open
+              </SelectItem>
+              <SelectItem value="closed">
+                Closed
+              </SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      )}
 
       <h2 className="text-2xl sm:text-3xl font-bold">About the Job</h2>
       <p className="sm:text-lg">{SingleJobData?.description}</p>
@@ -77,13 +119,14 @@ const JobPage = () => {
 
       <MDEditor.Markdown
         source={SingleJobData?.requirements}
-        style={{ background: "transparent", color: "white", fontSize: "1.3rem" }}
+        style={{
+          background: "transparent",
+          color: "white",
+          fontSize: "1.3rem",
+        }}
       />
 
-
       {/* Render Applications */}
-
-
     </div>
   );
 };
