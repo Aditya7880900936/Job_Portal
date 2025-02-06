@@ -73,7 +73,7 @@ const JobCard = ({
             variant="secondary "
             className="w-full hover:bg-white hover:text-black"
           >
-            Apply
+            More Details
           </Button>
         </Link>
         {!isMyJob && (

@@ -15,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import ApplyJobDrawer from "@/components/applyJob";
 
 const JobPage = () => {
   const { isLoaded, user } = useUser();
@@ -99,12 +100,8 @@ const JobPage = () => {
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectItem value="open">
-                Open
-              </SelectItem>
-              <SelectItem value="closed">
-                Closed
-              </SelectItem>
+              <SelectItem value="open">Open</SelectItem>
+              <SelectItem value="closed">Closed</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>
@@ -127,6 +124,15 @@ const JobPage = () => {
       />
 
       {/* Render Applications */}
+
+      {SingleJobData?.recruiter_id !== user?.id && (
+        <ApplyJobDrawer
+          job={SingleJobData}
+          user={user}
+          fetchJob={SingleJob}
+          applied={SingleJobData?.applications?.find((ap) => ap.candidate_id === user.id)}
+        />
+      )}
     </div>
   );
 };
