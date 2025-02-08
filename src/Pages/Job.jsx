@@ -66,7 +66,7 @@ const JobPage = () => {
         </div>
         <div className="flex gap-2">
           <Briefcase />
-          {SingleJobData?.applications?.length} Applicants
+          {SingleJobData?.applications?.length || 0} Applicants
         </div>
         <div className="flex gap-2">
           {SingleJobData?.isOpen ? (

@@ -7,7 +7,7 @@ export async function applyToApplications(token, jobData) {
   const fileName = `resume-${random}-${jobData.candidate_id}`;
 
   const { error: storageError } = await supabase.storage
-    .from("resumes")
+    .from("Resumes")
     .upload(fileName, jobData.resume);
 
   if (storageError) {
@@ -15,11 +15,11 @@ export async function applyToApplications(token, jobData) {
     return null;
   }
 
-  const resume = `${supabaseUrl}/storage/v1/object/public/resumes/${fileName}`;
+  const resume = `${supabaseUrl}/storage/v1/object/public/Resume_url/${fileName}`;
 
   let query = supabase
     .from("Applications")
-    .insert([{ ...jobData, resume }])
+    .insert([{ ...jobData, Resume_url:resume }])
     .select();
 
   const { data, error } = await query;
