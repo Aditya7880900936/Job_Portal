@@ -1,34 +1,33 @@
-import React from "react";
+/* eslint-disable react/prop-types */
+import { Button } from "@/components/ui/button";
 import {
   Drawer,
+  DrawerClose,
   DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
   DrawerDescription,
   DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
   DrawerTrigger,
-  DrawerClose,
-} from "./ui/drawer";
-import { Button } from "./ui/button";
+} from "@/components/ui/drawer";
 import { Input } from "./ui/input";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { Label } from "./ui/label";
-import { z } from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import useFetch from "@/Hooks/useFetch";
-import { applyToApplications } from "@/API/apiApplications";
+import { applyToJob } from "@/API/apiApplications";
 import { BarLoader } from "react-spinners";
 
 const schema = z.object({
-  yearsOfExperience: z
+  experience: z
     .number()
-    .min(0, { message: "Years of experience should be greater than 0" })
-    .max(100)
+    .min(0, { message: "Experience must be at least 0" })
     .int(),
   skills: z.string().min(1, { message: "Skills are required" }),
-  education: z.enum(["InterMediate", "Graduate", "Post Graduate"], {
-    required_error: "Education is required",
+  education: z.enum(["Intermediate", "Graduate", "Post Graduate"], {
+    message: "Education is required",
   }),
   resume: z
     .any()
@@ -36,16 +35,12 @@ const schema = z.object({
       (file) =>
         file[0] &&
         (file[0].type === "application/pdf" ||
-          file[0].type === "application/msword" ||
-          file[0].type ===
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"),
-      {
-        message: "Please upload a PDF, DOC or DOCX file",
-      }
+          file[0].type === "application/msword"),
+      { message: "Only PDF or Word documents are allowed" }
     ),
 });
 
-const ApplyJobDrawer = ({ job, user, fetchJob, applied = false }) => {
+export function ApplyJobDrawer({ user, job, fetchJob, applied = false }) {
   const {
     register,
     handleSubmit,
@@ -60,20 +55,20 @@ const ApplyJobDrawer = ({ job, user, fetchJob, applied = false }) => {
     loading: loadingApply,
     error: errorApply,
     fetchData: fnApply,
-  } = useFetch(applyToApplications);
+  } = useFetch(applyToJob);
 
-  const onSubmit = async (data) => {
-    await fnApply({
+  const onSubmit = (data) => {
+    fnApply({
       ...data,
       job_id: job.id,
       candidate_id: user.id,
-      name: user.name,
+      name: user.fullName,
       status: "Applied",
       resume: data.resume[0],
-    }).then(()=>{
-      fetchJob(),
-      reset()
-    })
+    }).then(() => {
+      fetchJob();
+      reset();
+    });
   };
 
   return (
@@ -81,7 +76,7 @@ const ApplyJobDrawer = ({ job, user, fetchJob, applied = false }) => {
       <DrawerTrigger asChild>
         <Button
           size="lg"
-          variant={job?.isOpen ? "blue" : "destructive"}
+          variant={job?.isOpen && !applied ? "blue" : "destructive"}
           disabled={!job?.isOpen || applied}
         >
           {job?.isOpen ? (applied ? "Applied" : "Apply") : "Hiring Closed"}
@@ -92,8 +87,9 @@ const ApplyJobDrawer = ({ job, user, fetchJob, applied = false }) => {
           <DrawerTitle>
             Apply for {job?.title} at {job?.company?.name}
           </DrawerTitle>
-          <DrawerDescription>Please fill out the form below</DrawerDescription>
+          <DrawerDescription>Please Fill the form below</DrawerDescription>
         </DrawerHeader>
+
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col gap-4 p-4 pb-0"
@@ -102,69 +98,63 @@ const ApplyJobDrawer = ({ job, user, fetchJob, applied = false }) => {
             type="number"
             placeholder="Years of Experience"
             className="flex-1"
-            {...register("yearsOfExperience", { valueAsNumber: true })}
+            {...register("experience", {
+              valueAsNumber: true,
+            })}
           />
-
-          {errors.yearsOfExperience && (
-            <p className="text-red-500">{errors.yearsOfExperience.message}</p>
+          {errors.experience && (
+            <p className="text-red-500">{errors.experience.message}</p>
           )}
-
           <Input
             type="text"
-            placeholder="Skills (Comma Seprated)"
+            placeholder="Skills (Comma Separated)"
             className="flex-1"
             {...register("skills")}
           />
           {errors.skills && (
             <p className="text-red-500">{errors.skills.message}</p>
           )}
-
           <Controller
             name="education"
             control={control}
             render={({ field }) => (
               <RadioGroup onValueChange={field.onChange} {...field}>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="InterMediate" id="InterMediate" />
-                  <Label htmlFor="InterMediate">InterMediate</Label>
+                  <RadioGroupItem value="Intermediate" id="intermediate" />
+                  <Label htmlFor="intermediate">Intermediate</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="Graduate" id="Graduate" />
-                  <Label htmlFor="Graduate">Graduate</Label>
+                  <RadioGroupItem value="Graduate" id="graduate" />
+                  <Label htmlFor="graduate">Graduate</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="Post Graduate" id="Post Graduate" />
-                  <Label htmlFor="Post Graduate">Post Graduate</Label>
+                  <RadioGroupItem value="Post Graduate" id="post-graduate" />
+                  <Label htmlFor="post-graduate">Post Graduate</Label>
                 </div>
               </RadioGroup>
             )}
           />
-
           {errors.education && (
             <p className="text-red-500">{errors.education.message}</p>
           )}
-
           <Input
             type="file"
             accept=".pdf, .doc, .docx"
             className="flex-1 file:text-gray-500"
             {...register("resume")}
           />
-
           {errors.resume && (
             <p className="text-red-500">{errors.resume.message}</p>
           )}
-
           {errorApply?.message && (
-            <p className="text-red-500">{errors.resume.message}</p>
+            <p className="text-red-500">{errorApply?.message}</p>
           )}
-
           {loadingApply && <BarLoader width={"100%"} color="#36d7b7" />}
-
           <Button type="submit" variant="blue" size="lg">
             Apply
           </Button>
         </form>
+
         <DrawerFooter>
           <DrawerClose asChild>
             <Button variant="outline">Cancel</Button>
@@ -173,6 +163,4 @@ const ApplyJobDrawer = ({ job, user, fetchJob, applied = false }) => {
       </DrawerContent>
     </Drawer>
   );
-};
-
-export default ApplyJobDrawer;
+}

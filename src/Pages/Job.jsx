@@ -15,7 +15,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import ApplyJobDrawer from "@/components/applyJob";
+import { ApplyJobDrawer } from "@/components/applyJob";
+import ApplicationCard from "@/components/ApplicationCard";
 
 const JobPage = () => {
   const { isLoaded, user } = useUser();
@@ -132,6 +133,15 @@ const JobPage = () => {
           fetchJob={SingleJob}
           applied={SingleJobData?.applications?.find((ap) => ap.candidate_id === user.id)}
         />
+      )}
+
+      { SingleJobData?.applications?.length > 0 && SingleJobData?.recruiter_id === user?.id && (
+        <div className="flex flex-col gap-2">
+           <h2 className="text-2xl sm:text-3xl font-bold">Applications</h2>
+           {SingleJobData?.applications.map((application)=>{
+            return <ApplicationCard key={application.id} application={application}/>
+           })}
+        </div>
       )}
     </div>
   );

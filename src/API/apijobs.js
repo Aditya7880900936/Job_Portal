@@ -7,7 +7,7 @@ export async function getJobs(
   const supabase = await supabaseClient(token);
 
   let query = supabase
-    .from("Jobs")
+    .from("jobs")
     .select("* , company:Companies(name,logo_url),saved:Saved_Jobs(id)", {
       count: "exact",
     });
@@ -73,8 +73,8 @@ export async function getSingleJob(token, { job_id }) {
   const supabase = await supabaseClient(token);
 
   let query = supabase
-    .from("Jobs")
-    .select("*, company:Companies(name,logo_url),applications:Applications(*)")
+    .from("jobs")
+    .select("*, company:Companies(name,logo_url),applications:applications(*)")
     .eq("id", job_id)
     .single();
 
@@ -92,7 +92,7 @@ export async function updateHiringStatus(token, { job_id } , isOpen) {
   const supabase = await supabaseClient(token);
 
   let query = supabase
-    .from("Jobs")
+    .from("jobs")
     .update({ isOpen})
     .eq("id", job_id)
     .select();
