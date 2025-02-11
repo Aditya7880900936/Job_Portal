@@ -79,7 +79,7 @@ export async function getSingleJob(token, { job_id }) {
     .single();
 
   const { data, error } = await query;
-  
+
   if (error) {
     console.error("Error Fetching Job: ", error);
     return null;
@@ -87,21 +87,35 @@ export async function getSingleJob(token, { job_id }) {
   return data;
 }
 
-
-export async function updateHiringStatus(token, { job_id } , isOpen) {
+export async function updateHiringStatus(token, { job_id }, isOpen) {
   const supabase = await supabaseClient(token);
 
   let query = supabase
     .from("jobs")
-    .update({ isOpen})
+    .update({ isOpen })
     .eq("id", job_id)
     .select();
 
   const { data, error } = await query;
-  
+
   if (error) {
     console.error("Error Updating Job: ", error);
     return null;
   }
   return data;
+}
+
+export async function addNewJob(token, _, jobData) {
+  const supabase = await supabaseClient(token);
+
+  const { data, error } = await supabase
+    .from("jobs")
+    .insert([jobData])
+    .select();
+
+    if (error) {
+      console.error("Error Adding Job: ", error);
+      return null;
+    }
+    return data
 }

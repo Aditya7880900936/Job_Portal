@@ -38,7 +38,7 @@ const ApplicationCard = ({ application, isCandidate = false }) => {
 
   return (
     <Card>
-      {!loadingHiringStatus && <BarLoader width={"100%"} color="#36d7b7" />}
+      {loadingHiringStatus && <BarLoader width={"100%"} color="#36d7b7" />}
       <CardHeader>
         <CardTitle className="flex justify-between font-bold">
           {isCandidate
