@@ -1,11 +1,26 @@
-import React from 'react'
+import CreatedApplications from "@/components/CreatedApplications";
+import CreatedJobs from "@/components/CreatedJobs";
+import { useUser } from "@clerk/clerk-react";
+import React from "react";
+import { BarLoader } from "react-spinners";
 
 const MyJobs = () => {
+  const { user, isLoaded } = useUser();
+
+  if (!isLoaded) {
+    return <BarLoader className="mb-4" width={"100%"} color="#36d7b7" />;
+  }
+
   return (
     <div>
-      <h1>Hey there this is my jobs</h1>
+      <h1 className="gradient-title font-extrabold text-6xl sm:text-7xl text-center pb-8">
+        {user?.unsafeMetadata?.role === "Recruiter"
+          ? "My Jobs"
+          : "My Applications"}
+      </h1>
+      {user?.unsafeMetadata?.role === "Recruiter" ? (<CreatedJobs/>):(<CreatedApplications/>)}
     </div>
-  )
-}
+  );
+};
 
-export default MyJobs
+export default MyJobs;
