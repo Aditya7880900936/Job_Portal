@@ -133,3 +133,19 @@ export async function getSavedJobs(token) {
     }
     return data
 }
+
+
+export async function getMyJobs(token , {recruiter_id}) {
+  const supabase = await supabaseClient(token);
+
+  const { data, error } = await supabase
+    .from("jobs")
+    .select("* , company:Companies(name,logo_url)")
+    .eq("recruiter_id", recruiter_id);
+
+    if (error) {
+      console.error("Error fetching Jobs : ", error);
+      return null;
+    }
+    return data
+}
