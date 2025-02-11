@@ -18,7 +18,11 @@ const MyJobs = () => {
           ? "My Jobs"
           : "My Applications"}
       </h1>
-      {user?.unsafeMetadata?.role === "Recruiter" ? (<CreatedJobs/>):(<CreatedApplications/>)}
+      {user?.unsafeMetadata?.role === "Recruiter" ? (
+        <CreatedJobs />
+      ) : (
+        <CreatedApplications />
+      )}
     </div>
   );
 };
